@@ -92,18 +92,18 @@ jobs:
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
           rustup target add aarch64-unknown-linux-gnu
+
           sudo apt update
           sudo apt install -yq --no-install-suggests --no-install-recommends \
             binfmt-support g++-5-aarch64-linux-gnu g++-5-multilib \
             gcc-5-aarch64-linux-gnu libc6-arm64-cross qemu qemu-user \
             qemu-user-binfmt
+
           sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
                      /lib/ld-linux-aarch64.so.1
-          sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
-                     /usr/bin/aarch64-linux-gnu-gcc
+
           echo "::set-env name=CARGO_TARGET_CARGO_TARGET_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
           echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
-          sudo chmod +x ./.cargo/arm64_runner.sh
 
       - name: Log versions
         run: |
