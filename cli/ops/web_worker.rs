@@ -5,15 +5,18 @@ use crate::ops::json_op;
 use crate::state::State;
 use crate::web_worker::WebWorkerHandle;
 use crate::worker::WorkerEvent;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use futures::channel::mpsc;
 use std::convert::From;
 
 pub fn web_worker_op<D>(
   sender: mpsc::Sender<WorkerEvent>,
   dispatcher: D,
-) -> impl Fn(&mut CoreIsolate, Value, Option<ZeroCopyBuf>) -> Result<JsonOp, OpError>
+) -> impl Fn(
+  &mut deno_core::Isolate,
+  Value,
+  Option<ZeroCopyBuf>,
+) -> Result<JsonOp, OpError>
 where
   D: Fn(
     &mpsc::Sender<WorkerEvent>,
@@ -21,7 +24,7 @@ where
     Option<ZeroCopyBuf>,
   ) -> Result<JsonOp, OpError>,
 {
-  move |_isolate: &mut CoreIsolate,
+  move |_isolate: &mut deno_core::Isolate,
         args: Value,
         zero_copy: Option<ZeroCopyBuf>|
         -> Result<JsonOp, OpError> { dispatcher(&sender, args, zero_copy) }
@@ -31,7 +34,11 @@ pub fn web_worker_op2<D>(
   handle: WebWorkerHandle,
   sender: mpsc::Sender<WorkerEvent>,
   dispatcher: D,
-) -> impl Fn(&mut CoreIsolate, Value, Option<ZeroCopyBuf>) -> Result<JsonOp, OpError>
+) -> impl Fn(
+  &mut deno_core::Isolate,
+  Value,
+  Option<ZeroCopyBuf>,
+) -> Result<JsonOp, OpError>
 where
   D: Fn(
     WebWorkerHandle,
@@ -40,7 +47,7 @@ where
     Option<ZeroCopyBuf>,
   ) -> Result<JsonOp, OpError>,
 {
-  move |_isolate: &mut CoreIsolate,
+  move |_isolate: &mut deno_core::Isolate,
         args: Value,
         zero_copy: Option<ZeroCopyBuf>|
         -> Result<JsonOp, OpError> {
@@ -49,7 +56,7 @@ where
 }
 
 pub fn init(
-  i: &mut CoreIsolate,
+  i: &mut Isolate,
   s: &State,
   sender: &mpsc::Sender<WorkerEvent>,
   handle: WebWorkerHandle,

@@ -2,16 +2,15 @@
 use super::dispatch_json::{Deserialize, JsonOp, Value};
 use crate::op_error::OpError;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_resources", s.stateful_json_op2(op_resources));
   i.register_op("op_close", s.stateful_json_op2(op_close));
 }
 
 fn op_resources(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   _args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -22,7 +21,7 @@ fn op_resources(
 
 /// op_close removes a resource from the resource table.
 fn op_close(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,

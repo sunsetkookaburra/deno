@@ -2,9 +2,7 @@ use super::dispatch_minimal::MinimalOp;
 use crate::http_util::HttpBody;
 use crate::op_error::OpError;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ResourceTable;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use futures::future::poll_fn;
 use futures::future::FutureExt;
 use futures::ready;
@@ -60,7 +58,7 @@ lazy_static! {
   };
 }
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_read", s.stateful_minimal_op2(op_read));
   i.register_op("op_write", s.stateful_minimal_op2(op_write));
 }
@@ -206,7 +204,7 @@ impl DenoAsyncRead for StreamResource {
 }
 
 pub fn op_read(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   is_sync: bool,
   rid: i32,
@@ -330,7 +328,7 @@ impl DenoAsyncWrite for StreamResource {
 }
 
 pub fn op_write(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   is_sync: bool,
   rid: i32,

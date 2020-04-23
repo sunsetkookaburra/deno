@@ -4,12 +4,11 @@ use crate::op_error::OpError;
 use crate::repl;
 use crate::repl::Repl;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_repl_start", s.stateful_json_op2(op_repl_start));
   i.register_op("op_repl_readline", s.stateful_json_op2(op_repl_readline));
 }
@@ -23,7 +22,7 @@ struct ReplStartArgs {
 }
 
 fn op_repl_start(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -46,7 +45,7 @@ struct ReplReadlineArgs {
 }
 
 fn op_repl_readline(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,

@@ -3,8 +3,7 @@ use super::io::std_file_resource;
 use super::io::{StreamResource, StreamResourceHolder};
 use crate::op_error::OpError;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 #[cfg(unix)]
 use nix::sys::termios;
 use serde_derive::Deserialize;
@@ -34,7 +33,7 @@ fn get_windows_handle(
   Ok(handle)
 }
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_set_raw", s.stateful_json_op2(op_set_raw));
   i.register_op("op_isatty", s.stateful_json_op2(op_isatty));
 }
@@ -46,7 +45,7 @@ struct SetRawArgs {
 }
 
 pub fn op_set_raw(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -214,7 +213,7 @@ struct IsattyArgs {
 }
 
 pub fn op_isatty(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,

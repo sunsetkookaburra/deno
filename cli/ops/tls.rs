@@ -4,8 +4,7 @@ use super::io::{StreamResource, StreamResourceHolder};
 use crate::op_error::OpError;
 use crate::resolve_addr::resolve_addr;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use futures::future::poll_fn;
 use futures::future::FutureExt;
 use std::convert::From;
@@ -28,7 +27,7 @@ use tokio_rustls::{
 };
 use webpki::DNSNameRef;
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_start_tls", s.stateful_json_op2(op_start_tls));
   i.register_op("op_connect_tls", s.stateful_json_op2(op_connect_tls));
   i.register_op("op_listen_tls", s.stateful_json_op2(op_listen_tls));
@@ -53,7 +52,7 @@ struct StartTLSArgs {
 }
 
 pub fn op_start_tls(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -126,7 +125,7 @@ pub fn op_start_tls(
 }
 
 pub fn op_connect_tls(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -302,7 +301,7 @@ struct ListenTlsArgs {
 }
 
 fn op_listen_tls(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -352,7 +351,7 @@ struct AcceptTlsArgs {
 }
 
 fn op_accept_tls(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,

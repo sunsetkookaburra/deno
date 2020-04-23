@@ -6,13 +6,11 @@ use crate::futures::future::try_join_all;
 use crate::msg;
 use crate::op_error::OpError;
 use crate::state::State;
-use deno_core::CoreIsolate;
 use deno_core::ModuleLoader;
-use deno_core::ModuleSpecifier;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use futures::future::FutureExt;
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_cache", s.stateful_json_op(op_cache));
   i.register_op("op_resolve_modules", s.stateful_json_op(op_resolve_modules));
   i.register_op(

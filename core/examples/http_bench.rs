@@ -3,12 +3,8 @@ extern crate derive_deref;
 #[macro_use]
 extern crate log;
 
-use deno_core::CoreIsolate;
-use deno_core::Op;
-use deno_core::ResourceTable;
-use deno_core::Script;
-use deno_core::StartupData;
-use deno_core::ZeroCopyBuf;
+use deno_core::Isolate as CoreIsolate;
+use deno_core::*;
 use futures::future::poll_fn;
 use futures::prelude::*;
 use futures::task::Context;
@@ -115,7 +111,7 @@ impl Isolate {
     F: 'static + Fn(State, u32, Option<ZeroCopyBuf>) -> Result<u32, Error>,
   {
     let state = self.state.clone();
-    let core_handler = move |_isolate: &mut CoreIsolate,
+    let core_handler = move |_isolate: &mut deno_core::Isolate,
                              control_buf: &[u8],
                              zero_copy_buf: Option<ZeroCopyBuf>|
           -> Op {
@@ -145,7 +141,7 @@ impl Isolate {
     <F::Ok as TryInto<i32>>::Error: Debug,
   {
     let state = self.state.clone();
-    let core_handler = move |_isolate: &mut CoreIsolate,
+    let core_handler = move |_isolate: &mut deno_core::Isolate,
                              control_buf: &[u8],
                              zero_copy_buf: Option<ZeroCopyBuf>|
           -> Op {

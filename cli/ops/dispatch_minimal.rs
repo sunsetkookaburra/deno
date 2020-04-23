@@ -7,7 +7,6 @@
 use crate::op_error::OpError;
 use byteorder::{LittleEndian, WriteBytesExt};
 use deno_core::Buf;
-use deno_core::CoreIsolate;
 use deno_core::Op;
 use deno_core::ZeroCopyBuf;
 use futures::future::FutureExt;
@@ -116,11 +115,11 @@ fn test_parse_min_record() {
 
 pub fn minimal_op<D>(
   d: D,
-) -> impl Fn(&mut CoreIsolate, &[u8], Option<ZeroCopyBuf>) -> Op
+) -> impl Fn(&mut deno_core::Isolate, &[u8], Option<ZeroCopyBuf>) -> Op
 where
-  D: Fn(&mut CoreIsolate, bool, i32, Option<ZeroCopyBuf>) -> MinimalOp,
+  D: Fn(&mut deno_core::Isolate, bool, i32, Option<ZeroCopyBuf>) -> MinimalOp,
 {
-  move |isolate: &mut CoreIsolate,
+  move |isolate: &mut deno_core::Isolate,
         control: &[u8],
         zero_copy: Option<ZeroCopyBuf>| {
     let mut record = match parse_min_record(control) {

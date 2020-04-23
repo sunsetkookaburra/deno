@@ -2,8 +2,7 @@
 use super::dispatch_json::{JsonOp, Value};
 use crate::op_error::OpError;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 
 #[cfg(unix)]
 use super::dispatch_json::Deserialize;
@@ -14,7 +13,7 @@ use std::task::Waker;
 #[cfg(unix)]
 use tokio::signal::unix::{signal, Signal, SignalKind};
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_signal_bind", s.stateful_json_op2(op_signal_bind));
   i.register_op("op_signal_unbind", s.stateful_json_op2(op_signal_unbind));
   i.register_op("op_signal_poll", s.stateful_json_op2(op_signal_poll));
@@ -39,7 +38,7 @@ struct SignalArgs {
 
 #[cfg(unix)]
 fn op_signal_bind(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -60,7 +59,7 @@ fn op_signal_bind(
 
 #[cfg(unix)]
 fn op_signal_poll(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -86,7 +85,7 @@ fn op_signal_poll(
 
 #[cfg(unix)]
 pub fn op_signal_unbind(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   _state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -110,7 +109,7 @@ pub fn op_signal_unbind(
 
 #[cfg(not(unix))]
 pub fn op_signal_bind(
-  _isolate: &mut CoreIsolate,
+  _isolate: &mut deno_core::Isolate,
   _state: &State,
   _args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -120,7 +119,7 @@ pub fn op_signal_bind(
 
 #[cfg(not(unix))]
 fn op_signal_unbind(
-  _isolate: &mut CoreIsolate,
+  _isolate: &mut deno_core::Isolate,
   _state: &State,
   _args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -130,7 +129,7 @@ fn op_signal_unbind(
 
 #[cfg(not(unix))]
 fn op_signal_poll(
-  _isolate: &mut CoreIsolate,
+  _isolate: &mut deno_core::Isolate,
   _state: &State,
   _args: Value,
   _zero_copy: Option<ZeroCopyBuf>,

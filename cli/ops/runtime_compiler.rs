@@ -4,11 +4,10 @@ use crate::compilers::runtime_compile;
 use crate::compilers::runtime_transpile;
 use crate::op_error::OpError;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use std::collections::HashMap;
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_compile", s.stateful_json_op(op_compile));
   i.register_op("op_transpile", s.stateful_json_op(op_transpile));
 }

@@ -4,9 +4,7 @@ use super::io::{std_file_resource, StreamResource, StreamResourceHolder};
 use crate::op_error::OpError;
 use crate::signal::kill;
 use crate::state::State;
-use deno_core::CoreIsolate;
-use deno_core::ResourceTable;
-use deno_core::ZeroCopyBuf;
+use deno_core::*;
 use futures::future::poll_fn;
 use futures::future::FutureExt;
 use futures::TryFutureExt;
@@ -16,7 +14,7 @@ use tokio::process::Command;
 #[cfg(unix)]
 use std::os::unix::process::ExitStatusExt;
 
-pub fn init(i: &mut CoreIsolate, s: &State) {
+pub fn init(i: &mut Isolate, s: &State) {
   i.register_op("op_run", s.stateful_json_op2(op_run));
   i.register_op("op_run_status", s.stateful_json_op2(op_run_status));
   i.register_op("op_kill", s.stateful_json_op(op_kill));
@@ -60,7 +58,7 @@ struct ChildResource {
 }
 
 fn op_run(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
@@ -174,7 +172,7 @@ struct RunStatusArgs {
 }
 
 fn op_run_status(
-  isolate: &mut CoreIsolate,
+  isolate: &mut deno_core::Isolate,
   state: &State,
   args: Value,
   _zero_copy: Option<ZeroCopyBuf>,
