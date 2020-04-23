@@ -100,15 +100,20 @@ jobs:
             libc6-arm64-cross qemu qemu-user \
             qemu-user-binfmt
 
-          sudo ls -la /usr/bin | grep -E "aarch64|gcc"
           sudo ls -la /usr/aarch64-linux-gnu
-          /usr/bin/aarch64-linux-gnu-gcc-5 --help
+          echo "--------"
+          sudo ls /usr/bin/aarch64-linux-gnu-gcc-5
+          echo "--------"
+          sudo ls /usr/aarch64-linux-gnu/bin
+          echo "--------"
 
           sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
                      /lib/ld-linux-aarch64.so.1
 
           sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
                      /usr/bin/aarch64-linux-gnu-gcc
+
+          sudo ls -la /usr/bin | grep -E "aarch64|gcc"
 
           echo "::set-env name=CARGO_TARGET_CARGO_TARGET_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
           echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
