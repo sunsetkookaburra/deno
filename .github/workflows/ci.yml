@@ -175,7 +175,7 @@ jobs:
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
           echo "::set-env name=CARGO_TARGET_CARGO_TARGET_RUNNER::/home/runner/work/deno/deno/.cargo/arm64_runner.sh"
-          cargo test --release --locked --all-targets
+          cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu --target-dir target/aarch64-unknown-linux-gnu
 
       - name: Test debug
         if: matrix.config.kind == 'test_debug'
