@@ -99,6 +99,9 @@ jobs:
             gcc-5-aarch64-linux-gnu libc6-arm64-cross qemu qemu-user \
             qemu-user-binfmt
 
+          sudo ls -la /usr/bin | grep -E "aarch64|gcc"
+          sudo ls -la /usr/aarch64-linux-gnu
+
           sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
                      /lib/ld-linux-aarch64.so.1
 
