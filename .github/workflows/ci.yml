@@ -115,7 +115,7 @@ jobs:
 
           sudo ls -la /usr/bin | grep -E "aarch64|gcc"
 
-          echo "::set-env name=CARGO_TARGET_CARGO_TARGET_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
+          echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
           echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
 
       - name: Log versions
@@ -164,7 +164,7 @@ jobs:
 
       - name: Build aarch64 release
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu --target-dir ./target/aarch64-unknown-linux-gnu
+        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu --target-dir target/aarch64-unknown-linux-gnu
 
       - name: Build debug
         if: matrix.config.kind == 'test_debug'
