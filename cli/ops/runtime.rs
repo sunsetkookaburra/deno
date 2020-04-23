@@ -18,6 +18,8 @@ static BUILD_OS: &str = "linux";
 static BUILD_OS: &str = "win";
 #[cfg(target_arch = "x86_64")]
 static BUILD_ARCH: &str = "x64";
+#[cfg(target_arch = "aarch64")]
+static BUILD_ARCH: &str = "arm64";
 
 pub fn init(i: &mut CoreIsolate, s: &State) {
   i.register_op("op_start", s.stateful_json_op(op_start));

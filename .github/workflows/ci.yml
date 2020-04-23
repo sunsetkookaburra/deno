@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: ${{ matrix.config.kind }} ${{ matrix.config.os }}
+    name: ${{ matrix.config.kind }} ${{ matrix.config.os }} ${{ matrix.config.target }}
     if: |
       github.event_name == 'push' ||
       !startsWith(github.event.pull_request.head.label, 'denoland:')
@@ -15,14 +15,22 @@ jobs:
         config:
           - os: macOS-latest
             kind: test_release
+            target: x86_64-apple-darwin
           - os: windows-2019
             kind: test_release
+            target: x86_64-pc-windows-msvc
           - os: ubuntu-16.04
             kind: test_release
+            target: x86_64-unknown-linux-gnu
+          - os: ubuntu-16.04
+            kind: test_release
+            target: aarch64-unknown-linux-gnu
           - os: ubuntu-16.04
             kind: test_debug
+            target: x86_64-unknown-linux-gnu
           - os: ubuntu-16.04
             kind: bench
+            target: x86_64-unknown-linux-gnu
           - os: ubuntu-16.04
             kind: lint
 
@@ -80,6 +88,23 @@ jobs:
             Select-Object -Skip 1 |
             ForEach-Object { Move-Item "$_" "$_.disabled" }
 
+      - name: Install cross compilation toolchain
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          rustup target add aarch64-unknown-linux-gnu
+          sudo apt update
+          sudo apt install -yq --no-install-suggests --no-install-recommends \
+            binfmt-support g++-5-aarch64-linux-gnu g++-5-multilib \
+            gcc-5-aarch64-linux-gnu libc6-arm64-cross qemu qemu-user \
+            qemu-user-binfmt
+          sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
+                     /lib/ld-linux-aarch64.so.1
+          sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
+                     /usr/bin/aarch64-linux-gnu-gcc
+          echo "::set-env name=CARGO_TARGET_CARGO_TARGET_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
+          echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
+          sudo chmod +x ./.cargo/arm64_runner.sh
+
       - name: Log versions
         run: |
           node -v
@@ -121,16 +146,26 @@ jobs:
         run: python ./tools/test_format.py
 
       - name: Build release
-        if: matrix.config.kind == 'test_release' || matrix.config.kind == 'bench'
+        if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo build --release --locked --all-targets
+
+      - name: Build aarch64 release
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu --target-dir ./target
 
       - name: Build debug
         if: matrix.config.kind == 'test_debug'
         run: cargo build --locked --all-targets
 
       - name: Test release
-        if: matrix.config.kind == 'test_release'
+        if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo test --release --locked --all-targets
+
+      - name: Test aarch64 release
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          echo "::set-env name=CARGO_TARGET_CARGO_TARGET_RUNNER::/home/runner/work/deno/deno/.cargo/arm64_runner.sh"
+          cargo test --release --locked --all-targets
 
       - name: Test debug
         if: matrix.config.kind == 'test_debug'
@@ -161,11 +196,17 @@ jobs:
           cat /proc/meminfo
 
       - name: Pre-release (linux)
-        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.kind == 'test_release'
+        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: |
           cd target/release
           zip -r deno-x86_64-unknown-linux-gnu.zip deno
           ./deno types > lib.deno.d.ts
+
+      - name: Pre-release (linux-aarch64)
+        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          cd target/release
+          zip -r deno-aarch64-unknown-linux-gnu.zip deno
 
       - name: Pre-release (mac)
         if: startsWith(matrix.config.os, 'macOS') && matrix.config.kind == 'test_release'
@@ -188,6 +229,7 @@ jobs:
             target/release/deno-x86_64-pc-windows-msvc.zip
             target/release/deno-x86_64-unknown-linux-gnu.zip
             target/release/deno-x86_64-apple-darwin.zip
+            target/release/deno-aarch64-unknown-linux-gnu.zip
             target/release/deno_src.tar.gz
             target/release/lib.deno.d.ts
           draft: true
