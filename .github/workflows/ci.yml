@@ -101,6 +101,7 @@ jobs:
 
           sudo ls -la /usr/bin | grep -E "aarch64|gcc"
           sudo ls -la /usr/aarch64-linux-gnu
+          /usr/bin/aarch64-linux-gnu-gcc-5 --help
 
           sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
                      /lib/ld-linux-aarch64.so.1
