@@ -98,10 +98,7 @@ jobs:
           newgrp docker
           cargo install cross
           sudo systemctl start docker
-          pwd
-          ls .
-          ls .cargo
-          docker build -t deno-aarch64 - < /home/runner/work/deno/deno/.cargo/Dockerfile.aarch64-deno-build
+          docker build -t deno-aarch64 - < ./.cargo/Dockerfile.aarch64-deno-build
 
       #- name: Install cross compilation toolchain
       #  if: matrix.config.target == 'aarch64-unknown-linux-gnu'
