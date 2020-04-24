@@ -156,6 +156,13 @@ jobs:
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu --target-dir target/aarch64-unknown-linux-gnu
 
+      - name: View Aarch64 Build Folder
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          sudo ls -la target/aarch64-unknown-linux-gnu
+          echo "--------"
+          sudo ls -la target/aarch64-unknown-linux-gnu/release
+
       - name: Sample Aarch64 Build
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         uses: actions/upload-artifact@v1
