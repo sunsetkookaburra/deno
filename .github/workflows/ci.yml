@@ -23,7 +23,7 @@ jobs:
             kind: test_release
             target: x86_64-unknown-linux-gnu
           - os: ubuntu-16.04
-            kind: test_release
+            kind: test_debug
             target: aarch64-unknown-linux-gnu
           - os: ubuntu-16.04
             kind: test_debug
@@ -188,6 +188,10 @@ jobs:
         if: matrix.config.kind == 'test_debug'
         run: cargo build --locked --all-targets
 
+      - name: Build aarch64 debug
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
+
       - name: Test release
         if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo test --release --locked --all-targets
@@ -199,6 +203,10 @@ jobs:
       - name: Test debug
         if: matrix.config.kind == 'test_debug'
         run: cargo test --locked --all-targets
+
+      - name: Test aarch64 debug
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Run Benchmarks
         if: matrix.config.kind == 'bench'
