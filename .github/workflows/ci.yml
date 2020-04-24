@@ -127,7 +127,10 @@ jobs:
           python --version
           rustc --version
           cargo --version
-          cross --version
+
+      - name: Log cross version
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cross --version
 
       - name: Configure cargo data directory
         # After this point, all cargo registry and crate data is stored in
