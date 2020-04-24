@@ -209,7 +209,7 @@ jobs:
         with:
           architecture: aarch64
           distribution: ubuntu16.04
-          run: df; while read p; do $p done < /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
+          run: while read p; do $p; done < /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
 
       - name: Run Benchmarks
         if: matrix.config.kind == 'bench'
