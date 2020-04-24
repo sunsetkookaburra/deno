@@ -151,29 +151,45 @@ jobs:
         if: matrix.config.kind == 'lint'
         run: python ./tools/test_format.py
 
-      - name: Build release
-        if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets
+      #- name: Build release
+      #  if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo build --release --locked --all-targets
 
-      - name: Build debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo build --locked --all-targets
+      #- name: Build debug
+      #  if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo build --locked --all-targets
 
-      - name: Test release
-        if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo test --release --locked --all-targets
+      #- name: Test release
+      #  if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo test --release --locked --all-targets
 
-      - name: Test debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo test --locked --all-targets
+      #- name: Test debug
+      #  if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo test --locked --all-targets
 
       - name: Build aarch64 release
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
+      - name: Sample aarch64 build
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        uses: actions/upload-artifact@v1
+        with:
+          name: deno-aarch64-unknown-linux-gnu
+          path: target/aarch64-unknown-linux-gnu/release/deno
+
       - name: Build aarch64 debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
+        run: |
+          cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
+          df
+
+      - name: Sample aarch64 debug
+        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        uses: actions/upload-artifact@v1
+        with:
+          name: deno-aarch64-unknown-linux-gnu
+          path: target/aarch64-unknown-linux-gnu/debug/deno
 
       - name: Create release test file aarch64
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -181,7 +197,9 @@ jobs:
 
       - name: Create debug test file aarch64
         if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
+        run: |
+          cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
+          df
 
       - name: Run aarch64 tests
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -189,7 +207,7 @@ jobs:
         with:
           architecture: aarch64
           distribution: ubuntu16.04
-          run: while read p; do $p done < /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
+          run: df; while read p; do $p done < /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
 
       - name: Run Benchmarks
         if: matrix.config.kind == 'bench'
