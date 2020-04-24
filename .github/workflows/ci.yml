@@ -13,26 +13,26 @@ jobs:
     strategy:
       matrix:
         config:
-          - os: macOS-latest
-            kind: test_release
-            target: x86_64-apple-darwin
-          - os: windows-2019
-            kind: test_release
-            target: x86_64-pc-windows-msvc
-          - os: ubuntu-16.04
-            kind: test_release
-            target: x86_64-unknown-linux-gnu
+          #- os: macOS-latest
+          #  kind: test_release
+          #  target: x86_64-apple-darwin
+          #- os: windows-2019
+          #  kind: test_release
+          #  target: x86_64-pc-windows-msvc
+          #- os: ubuntu-16.04
+          #  kind: test_release
+          #  target: x86_64-unknown-linux-gnu
           - os: ubuntu-16.04
             kind: test_debug
             target: aarch64-unknown-linux-gnu
-          - os: ubuntu-16.04
-            kind: test_debug
-            target: x86_64-unknown-linux-gnu
-          - os: ubuntu-16.04
-            kind: bench
-            target: x86_64-unknown-linux-gnu
-          - os: ubuntu-16.04
-            kind: lint
+          #- os: ubuntu-16.04
+          #  kind: test_debug
+          #  target: x86_64-unknown-linux-gnu
+          #- os: ubuntu-16.04
+          #  kind: bench
+          #  target: x86_64-unknown-linux-gnu
+          #- os: ubuntu-16.04
+          #  kind: lint
 
       # Always run master branch builds to completion. This allows the cache to
       # stay mostly up-to-date in situations where a single job fails due to
@@ -151,21 +151,21 @@ jobs:
         if: matrix.config.kind == 'lint'
         run: python ./tools/test_format.py
 
-      #- name: Build release
-      #  if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
-      #  run: cargo build --release --locked --all-targets
+      - name: Build release
+        if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
+        run: cargo build --release --locked --all-targets
 
-      #- name: Build debug
-      #  if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-      #  run: cargo build --locked --all-targets
+      - name: Build debug
+        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+        run: cargo build --locked --all-targets
 
-      #- name: Test release
-      #  if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-      #  run: cargo test --release --locked --all-targets
+      - name: Test release
+        if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+        run: cargo test --release --locked --all-targets
 
-      #- name: Test debug
-      #  if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-      #  run: cargo test --locked --all-targets
+      - name: Test debug
+        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+        run: cargo test --locked --all-targets
 
       - name: Build aarch64 release
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
