@@ -188,7 +188,7 @@ jobs:
       #    path: target/aarch64-unknown-linux-gnu/release/deno
 
       - name: Build debug
-        if: matrix.config.kind == 'test_debug'
+        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo build --locked --all-targets
 
       - name: Build aarch64 debug
@@ -204,7 +204,7 @@ jobs:
         run: cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Test debug
-        if: matrix.config.kind == 'test_debug'
+        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo test --locked --all-targets
 
       - name: Test aarch64 debug
