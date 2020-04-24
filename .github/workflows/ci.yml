@@ -135,7 +135,7 @@ jobs:
           echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::/home/runner/work/deno/deno/.cargo/aarch64_runner.sh"
           echo "::set-env name=CC_aarch64_unknown_linux_gnu::aarch64-linux-gnu-gcc --disable-shared"
           echo "::set-env name=CC::aarch64-linux-gnu-gcc --disable-shared"
-          echo "::set-env name=CFLAGS::'-Os'"
+          echo "::set-env name=CFLAGS::-Os"
           echo "::set-env name=RUST_TEST_THREADS::1"
           echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
           touch /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
