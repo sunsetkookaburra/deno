@@ -88,18 +88,6 @@ jobs:
             Select-Object -Skip 1 |
             ForEach-Object { Move-Item "$_" "$_.disabled" }
 
-      #- name: Install cross compilation toolchain
-      #  if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-      #  run: |
-      #    sudo apt update
-      #    sudo apt install -yq --no-install-suggests --no-install-recommends \
-      #      docker
-      #    sudo usermod -aG docker $USER
-      #    newgrp docker
-      #    cargo install cross
-      #    sudo systemctl start docker
-      #    docker build -t deno-aarch64 - < ./.cargo/Dockerfile.aarch64-deno-build
-
       #echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::qemu-aarch64 -L /usr/aarch64-linux-gnu"
       - name: Install cross compilation toolchain
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -167,51 +155,41 @@ jobs:
         if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo build --release --locked --all-targets
 
-      - name: Build aarch64 release
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
-
-      #- name: View Aarch64 Build Folder
-      #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-      #  run: |
-      #    sudo ls -la target
-      #    echo "--------"
-      #    sudo ls -la target/aarch64-unknown-linux-gnu
-      #    echo "--------"
-      #    sudo ls -la target/aarch64-unknown-linux-gnu/release
-
-      #- name: Sample Aarch64 Build
-      #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-      #  uses: actions/upload-artifact@v1
-      #  with:
-      #    name: deno-aarch64-unknown-linux-gnu
-      #    path: target/aarch64-unknown-linux-gnu/release/deno
-
       - name: Build debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo build --locked --all-targets
-
-      - name: Build aarch64 debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Test release
         if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo test --release --locked --all-targets
 
-      - name: Test aarch64 release
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
-
       - name: Test debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
         run: cargo test --locked --all-targets
 
-      - name: Test aarch64 debug
+      - name: Build aarch64 release
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
+
+      - name: Build aarch64 debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
-          cat /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
+        run: cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
+
+      - name: Create release test file aarch64
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
+
+      - name: Create debug test file aarch64
+        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        run: cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
+
+      - name: Run aarch64 tests
+        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+        uses: uraimo/run-on-arch-action@v1.0.8
+        with:
+          architecture: aarch64
+          distribution: ubuntu16.04
+          run: while read p; do $p done < /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
 
       - name: Run Benchmarks
         if: matrix.config.kind == 'bench'
