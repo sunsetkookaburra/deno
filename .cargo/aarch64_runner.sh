@@ -1,2 +1,2 @@
 #!/bin/sh
-echo $@ >> /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
+echo "${$@/\/home\/runner\/work\/deno\/deno\//}" >> /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
