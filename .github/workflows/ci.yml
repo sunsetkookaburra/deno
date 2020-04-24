@@ -209,7 +209,7 @@ jobs:
         with:
           architecture: aarch64
           distribution: ubuntu16.04
-          run: ls -la
+          run: while read p; do $p; done < .cargo/aarch64_tests.txt
 
       - name: Run Benchmarks
         if: matrix.config.kind == 'bench'
