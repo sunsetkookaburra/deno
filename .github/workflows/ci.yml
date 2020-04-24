@@ -23,7 +23,7 @@ jobs:
           #  kind: test_release
           #  target: x86_64-unknown-linux-gnu
           - os: ubuntu-16.04
-            kind: test_release
+            kind: test_debug
             target: aarch64-unknown-linux-gnu
           #- os: ubuntu-16.04
           #  kind: test_debug
@@ -89,36 +89,36 @@ jobs:
             ForEach-Object { Move-Item "$_" "$_.disabled" }
 
       #echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::qemu-aarch64 -L /usr/aarch64-linux-gnu"
-      - name: Install cross compilation toolchain
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          df
-          rustup target add aarch64-unknown-linux-gnu
-          sudo apt update
-          sudo apt install -yq --no-install-suggests --no-install-recommends \
-            libc6-arm64-cross \
-            g++-5-aarch64-linux-gnu g++-5-multilib \
-            gcc-5-aarch64-linux-gnu gcc-5-multilib
-          sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
-                     /lib/ld-linux-aarch64.so.1
-          sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
-                     /usr/bin/aarch64-linux-gnu-gcc
-          echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
-          echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::/home/runner/work/deno/deno/.cargo/aarch64_runner.sh"
-          echo "::set-env name=CC_aarch64_unknown_linux_gnu::aarch64-linux-gnu-gcc"
-          echo "::set-env name=CXX_aarch64_unknown_linux_gnu::aarch64-linux-gnu-g++"
-          echo "::set-env name=RUST_TEST_THREADS::1"
-          echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
-          touch /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
-          chmod +x /home/runner/work/deno/deno/.cargo/aarch64_runner.sh
-          df
+      #- name: Install cross compilation toolchain
+      #  if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  run: |
+      #    df
+      #    rustup target add aarch64-unknown-linux-gnu
+      #    sudo apt update
+      #    sudo apt install -yq --no-install-suggests --no-install-recommends \
+      #      libc6-arm64-cross \
+      #      g++-5-aarch64-linux-gnu g++-5-multilib \
+      #      gcc-5-aarch64-linux-gnu gcc-5-multilib
+      #    sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
+      #               /lib/ld-linux-aarch64.so.1
+      #    sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
+      #               /usr/bin/aarch64-linux-gnu-gcc
+      #    echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
+      #    echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::/home/runner/work/deno/deno/.cargo/aarch64_runner.sh"
+      #    echo "::set-env name=CC_aarch64_unknown_linux_gnu::aarch64-linux-gnu-gcc"
+      #    echo "::set-env name=CXX_aarch64_unknown_linux_gnu::aarch64-linux-gnu-g++"
+      #    echo "::set-env name=RUST_TEST_THREADS::1"
+      #    echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
+      #    touch /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
+      #    chmod +x /home/runner/work/deno/deno/.cargo/aarch64_runner.sh
+      #    df
 
-      - name: Log versions
-        run: |
-          node -v
-          python --version
-          rustc --version
-          cargo --version
+      #- name: Log versions
+      #  run: |
+      #    node -v
+      #    python --version
+      #    rustc --version
+      #    cargo --version
 
       - name: Configure cargo data directory
         # After this point, all cargo registry and crate data is stored in
@@ -145,33 +145,48 @@ jobs:
           restore-keys: |
             ${{ matrix.config.os }}-${{ matrix.config.kind }}-
 
-      - name: lint.py
-        if: matrix.config.kind == 'lint'
-        run: python ./tools/lint.py
+      #- name: lint.py
+      #  if: matrix.config.kind == 'lint'
+      #  run: python ./tools/lint.py
 
-      - name: test_format.py
-        if: matrix.config.kind == 'lint'
-        run: python ./tools/test_format.py
+      #- name: test_format.py
+      #  if: matrix.config.kind == 'lint'
+      #  run: python ./tools/test_format.py
 
-      - name: Build release
-        if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets
+      #- name: Build release
+      #  if: (matrix.config.kind == 'test_release' || matrix.config.kind == 'bench') && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo build --release --locked --all-targets
 
-      - name: Build debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo build --locked --all-targets
+      #- name: Build debug
+      #  if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo build --locked --all-targets
 
-      - name: Test release
-        if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo test --release --locked --all-targets
+      #- name: Test release
+      #  if: matrix.config.kind == 'test_release' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo test --release --locked --all-targets
 
-      - name: Test debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
-        run: cargo test --locked --all-targets
+      #- name: Test debug
+      #  if: matrix.config.kind == 'test_debug' && matrix.config.target != 'aarch64-unknown-linux-gnu'
+      #  run: cargo test --locked --all-targets
 
-      - name: Build aarch64 release
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
+      - name: Install aarch64 toolchain
+        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        uses: actions-rs/toolchain@v1
+        with: 
+          toolchain: stable
+          target: aarch64-unknown-linux-gnu
+          override: true
+
+      - name: Build aarch64 debug
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --locked --all-targets --target aarch64-unknown-linux-gnu
+
+      #- name: Build aarch64 release
+      #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
       #- name: Sample aarch64 build
       #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -180,40 +195,40 @@ jobs:
       #    name: deno-aarch64-unknown-linux-gnu
       #    path: target/aarch64-unknown-linux-gnu/release/deno
 
-      - name: Build aarch64 debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
-          df
+      #- name: Build aarch64 debug
+      #  if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  run: |
+      #    cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
+      #    df
 
-      - name: Sample aarch64 debug
-        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        uses: actions/upload-artifact@v1
-        with:
-          name: deno-aarch64-unknown-linux-gnu
-          path: target/aarch64-unknown-linux-gnu/debug/deno
+      #- name: Sample aarch64 debug
+      #  if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  uses: actions/upload-artifact@v1
+      #  with:
+      #    name: deno-aarch64-unknown-linux-gnu
+      #    path: target/aarch64-unknown-linux-gnu/debug/deno
 
-      - name: Create release test file aarch64
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
+      ##- name: Create release test file aarch64
+      ##  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      ##  run: cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
-      - name: Create debug test file aarch64
-        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
-          df
+      ##- name: Create debug test file aarch64
+      ##  if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      ##  run: |
+      ##    cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
+      ##    df
 
-      - name: Run aarch64 tests
-        if: matrix.config.target == 'aarch64-unknown-linux-gnu'
-        uses: uraimo/run-on-arch-action@v1.0.8
-        with:
-          architecture: aarch64
-          distribution: ubuntu16.04
-          run: while read p; do $p; done < .cargo/aarch64_tests.txt
+      ##- name: Run aarch64 tests
+      ##  if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+      ##  uses: uraimo/run-on-arch-action@v1.0.8
+      ##  with:
+      ##    architecture: aarch64
+      ##    distribution: ubuntu16.04
+      ##    run: while read p; do $p; done < .cargo/aarch64_tests.txt
 
-      - name: Run Benchmarks
-        if: matrix.config.kind == 'bench'
-        run: python ./tools/benchmark.py --release
+      #- name: Run Benchmarks
+      #  if: matrix.config.kind == 'bench'
+      #  run: python ./tools/benchmark.py --release
 
       - name: Post Benchmarks
         if: matrix.config.kind == 'bench' && github.ref == 'refs/heads/master' && github.repository == 'denoland/deno'
