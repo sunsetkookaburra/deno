@@ -91,23 +91,35 @@ jobs:
       - name: Install cross compilation toolchain
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
-          rustup target add aarch64-unknown-linux-gnu
           sudo apt update
           sudo apt install -yq --no-install-suggests --no-install-recommends \
-            binfmt-support libc6-arm64-cross qemu qemu-user \
-            g++-5-aarch64-linux-gnu g++-5-multilib \
-            gcc-5-aarch64-linux-gnu gcc-5-multilib \
-            qemu-user-binfmt
-          sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
-                     /lib/ld-linux-aarch64.so.1
-          sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
-                     /usr/bin/aarch64-linux-gnu-gcc
-          sudo ls -la /usr/bin | grep -E "aarch64|gcc"
-          sudo chmod +x ./.cargo/arm64_runner.sh
-          touch ./.cargo/arm64_tests.txt
-          echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
-          echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::qemu-aarch64 -L /usr/aarch64-linux-gnu"
-          echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
+            docker
+          sudo groupadd docker
+          sudo usermod -aG docker $USER
+          newgrp docker
+          cargo install cross
+          sudo systemctl start docker
+
+      #- name: Install cross compilation toolchain
+      #  if: matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  run: |
+      #    rustup target add aarch64-unknown-linux-gnu
+      #    sudo apt update
+      #    sudo apt install -yq --no-install-suggests --no-install-recommends \
+      #      binfmt-support libc6-arm64-cross qemu qemu-user \
+      #      g++-5-aarch64-linux-gnu g++-5-multilib \
+      #      gcc-5-aarch64-linux-gnu gcc-5-multilib \
+      #      qemu-user-binfmt
+      #    sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
+      #               /lib/ld-linux-aarch64.so.1
+      #    sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
+      #               /usr/bin/aarch64-linux-gnu-gcc
+      #    sudo ls -la /usr/bin | grep -E "aarch64|gcc"
+      #    sudo chmod +x ./.cargo/arm64_runner.sh
+      #    touch ./.cargo/arm64_tests.txt
+      #    echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
+      #    echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::qemu-aarch64 -L /usr/aarch64-linux-gnu"
+      #    echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
 
       - name: Log versions
         run: |
@@ -155,7 +167,7 @@ jobs:
 
       - name: Build aarch64 release
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
+        run: cross build --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
       #- name: View Aarch64 Build Folder
       #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -185,7 +197,7 @@ jobs:
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
           file target/aarch64-unknown-linux-gnu/release/deno
-          cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
+          cross test --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Test debug
         if: matrix.config.kind == 'test_debug'
