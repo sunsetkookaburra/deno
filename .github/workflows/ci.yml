@@ -94,7 +94,6 @@ jobs:
           sudo apt update
           sudo apt install -yq --no-install-suggests --no-install-recommends \
             docker
-          sudo groupadd docker
           sudo usermod -aG docker $USER
           newgrp docker
           cargo install cross
