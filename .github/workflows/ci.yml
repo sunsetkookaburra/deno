@@ -98,6 +98,7 @@ jobs:
           newgrp docker
           cargo install cross
           sudo systemctl start docker
+          docker build deno-aarch64 ./.cargo/Dockerfile.aarch64-deno-build
 
       #- name: Install cross compilation toolchain
       #  if: matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -126,6 +127,7 @@ jobs:
           python --version
           rustc --version
           cargo --version
+          cross --version
 
       - name: Configure cargo data directory
         # After this point, all cargo registry and crate data is stored in
