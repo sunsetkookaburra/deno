@@ -156,21 +156,21 @@ jobs:
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
-      - name: View Aarch64 Build Folder
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          sudo ls -la target
-          echo "--------"
-          sudo ls -la target/aarch64-unknown-linux-gnu
-          echo "--------"
-          sudo ls -la target/aarch64-unknown-linux-gnu/release
+      #- name: View Aarch64 Build Folder
+      #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  run: |
+      #    sudo ls -la target
+      #    echo "--------"
+      #    sudo ls -la target/aarch64-unknown-linux-gnu
+      #    echo "--------"
+      #    sudo ls -la target/aarch64-unknown-linux-gnu/release
 
-      - name: Sample Aarch64 Build
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        uses: actions/upload-artifact@v1
-        with:
-          name: deno-aarch64-unknown-linux-gnu
-          path: target/aarch64-unknown-linux-gnu/release/deno
+      #- name: Sample Aarch64 Build
+      #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+      #  uses: actions/upload-artifact@v1
+      #  with:
+      #    name: deno-aarch64-unknown-linux-gnu
+      #    path: target/aarch64-unknown-linux-gnu/release/deno
 
       - name: Build debug
         if: matrix.config.kind == 'test_debug'
@@ -183,7 +183,7 @@ jobs:
       - name: Test aarch64 release
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
-          echo "::set-env name=CARGO_TARGET_CARGO_TARGET_RUNNER::/home/runner/work/deno/deno/.cargo/arm64_runner.sh"
+          echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::/home/runner/work/deno/deno/.cargo/arm64_runner.sh"
           cargo test --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Test debug
