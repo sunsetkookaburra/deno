@@ -92,10 +92,11 @@ jobs:
       - name: Install cross compilation toolchain
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
+          df
           rustup target add aarch64-unknown-linux-gnu
           sudo apt update
           sudo apt install -yq --no-install-suggests --no-install-recommends \
-            binfmt-support libc6-arm64-cross qemu qemu-user qemu-user-binfmt \
+            libc6-arm64-cross \
             g++-5-aarch64-linux-gnu g++-5-multilib \
             gcc-5-aarch64-linux-gnu gcc-5-multilib
           sudo ln -s /usr/aarch64-linux-gnu/lib/ld-linux-aarch64.so.1 \
@@ -110,6 +111,7 @@ jobs:
           echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
           touch /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
           chmod +x /home/runner/work/deno/deno/.cargo/aarch64_runner.sh
+          df
 
       - name: Log versions
         run: |
