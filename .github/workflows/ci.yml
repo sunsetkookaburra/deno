@@ -128,7 +128,7 @@ jobs:
           rustup target add aarch64-unknown-linux-gnu
           sudo apt update
           sudo apt install -yq --no-install-suggests --no-install-recommends \
-            gcc-5-aarch64-linux-gnu
+            gcc-5-aarch64-linux-gnu libc6-arm64-cross gcc-5-multilib
           sudo ln -s /usr/bin/aarch64-linux-gnu-gcc-5 \
                      /usr/bin/aarch64-linux-gnu-gcc
           echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER::/usr/bin/aarch64-linux-gnu-gcc-5"
