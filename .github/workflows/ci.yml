@@ -100,6 +100,7 @@ jobs:
       #    sudo systemctl start docker
       #    docker build -t deno-aarch64 - < ./.cargo/Dockerfile.aarch64-deno-build
 
+      #echo "::set-env name=CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_RUNNER::qemu-aarch64 -L /usr/aarch64-linux-gnu"
       - name: Install cross compilation toolchain
         if: matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: |
@@ -189,7 +190,7 @@ jobs:
         run: cargo build --locked --all-targets
 
       - name: Build aarch64 debug
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Test release
@@ -205,7 +206,7 @@ jobs:
         run: cargo test --locked --all-targets
 
       - name: Test aarch64 debug
-        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cargo test --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Run Benchmarks
