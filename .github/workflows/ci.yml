@@ -145,7 +145,6 @@ jobs:
           touch /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
           chmod +x /home/runner/work/deno/deno/.cargo/aarch64_runner.sh
           rustup target add aarch64-unknown-linux-gnu
-          df
 
       - name: lint.py
         if: matrix.config.kind == 'lint'
