@@ -173,7 +173,7 @@ jobs:
 
       - name: Build aarch64 release
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
+        run: cargo build -vv --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Sample aarch64 build
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -184,9 +184,7 @@ jobs:
 
       - name: Build aarch64 debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-        run: |
-          cargo build --locked --all-targets --target aarch64-unknown-linux-gnu
-          df
+        run: cargo build -vv --locked --all-targets --target aarch64-unknown-linux-gnu
 
       - name: Sample aarch64 debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
