@@ -13,7 +13,7 @@ fn main() {
   }
 
   // To debug snapshot issues uncomment:
-  // deno_typescript::trace_serializer();
+  deno_typescript::trace_serializer();
 
   println!(
     "cargo:rustc-env=TS_VERSION={}",
