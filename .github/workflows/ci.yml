@@ -211,7 +211,7 @@ jobs:
         with:
           architecture: aarch64
           distribution: ubuntu16.04
-          additionalArgs: -v /usr/bin:/usr/bin
+          additionalArgs: -v /usr/bin:/usr/bin -v /home/runner/work/deno/deno/:/home/runner/work/deno/deno/
           run: |
             PATH=/usr/bin:$PATH
             ls -la
