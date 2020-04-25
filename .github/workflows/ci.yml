@@ -42,7 +42,7 @@ jobs:
 
     env:
       CARGO_INCREMENTAL: 0
-      RUST_BACKTRACE: 1
+      RUST_BACKTRACE: full
 
     steps:
       - name: Configure git
@@ -175,12 +175,12 @@ jobs:
         if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         run: cargo build --release --locked --all-targets --target aarch64-unknown-linux-gnu
 
-      #- name: Sample aarch64 build
-      #  if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
-      #  uses: actions/upload-artifact@v1
-      #  with:
-      #    name: deno-aarch64-unknown-linux-gnu
-      #    path: target/aarch64-unknown-linux-gnu/release/deno
+      - name: Sample aarch64 build
+        if: matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        uses: actions/upload-artifact@v1
+        with:
+          name: deno-aarch64-unknown-linux-gnu
+          path: target/aarch64-unknown-linux-gnu/release/deno
 
       - name: Build aarch64 debug
         if: matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
@@ -211,7 +211,14 @@ jobs:
         with:
           architecture: aarch64
           distribution: ubuntu16.04
-          run: ./target/aarch64-unknown-linux-gnu/release/deno --version && while read p; do $p; done < .cargo/aarch64_tests.txt
+          additionalArgs: -v /usr/bin:/usr/bin
+          run: |
+            PATH=/usr/bin:$PATH
+            ls -la
+            ls -la /usr/bin
+            ./target/aarch64-unknown-linux-gnu/release/deno --version
+            ./target/aarch64-unknown-linux-gnu/release/deno eval "console.log('Deno,,Hello,,World');"
+            while read p; do $p; done < .cargo/aarch64_tests.txt
 
       - name: Run Benchmarks
         if: matrix.config.kind == 'bench'
