@@ -141,7 +141,7 @@ jobs:
           echo "::set-env name=CC::aarch64-linux-gnu-gcc"
           echo "::set-env name=CXX::aarch64-linux-gnu-g++"
           echo "::set-env name=RUST_TEST_THREADS::1"
-          echo "::set-env name=QEMU_LD_PREFIX::/usr/aarch64-linux-gnu"
+          echo "::set-env name=V8_FROM_SOURCE::1"
           touch /home/runner/work/deno/deno/.cargo/aarch64_tests.txt
           chmod +x /home/runner/work/deno/deno/.cargo/aarch64_runner.sh
           rustup target add aarch64-unknown-linux-gnu
