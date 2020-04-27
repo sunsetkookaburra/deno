@@ -86,7 +86,7 @@ jobs:
             export CARGO_HOME=$(pwd)/.cargo_home
             sudo dpkg --add-architecture arm64
             apt update
-            apt install python:arm64
+            apt install -yq --no-install-suggests --no-install-recommends python:arm64
             curl https://sh.rustup.rs -sSf | sh -s -- -y
             cargo build --release --locked --all-targets
 
