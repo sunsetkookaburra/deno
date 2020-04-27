@@ -75,7 +75,7 @@ jobs:
             ${{ matrix.config.os }}-${{ matrix.config.kind }}-
 
       - name: Build aarch64
-        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.kind == 'test_release' && matrix.config.target == 'aarch64-unknown-linux-gnu'
+        if: startsWith(matrix.config.os, 'ubuntu') && matrix.config.kind == 'test_debug' && matrix.config.target == 'aarch64-unknown-linux-gnu'
         uses: uraimo/run-on-arch-action@master
         with:
           architecture: aarch64
