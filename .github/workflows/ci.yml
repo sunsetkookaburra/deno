@@ -87,7 +87,7 @@ jobs:
             sudo dpkg --add-architecture arm64
             apt update
             apt install -yq --no-install-suggests --no-install-recommends python:arm64 curl:arm64
-            curl https://sh.rustup.rs -sSf | sh -s -- -y
+            curl -k https://sh.rustup.rs -sSf | sh -s -- -y
             PATH=$PATH:~/.cargo/bin
             cargo build --release --locked --all-targets
 
