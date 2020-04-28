@@ -91,7 +91,7 @@ jobs:
             touch curl-bin/curl
             echo "#!/bin/sh" >> curl-bin/curl
             echo 'curl -k "$@"' >> curl-bin/curl
-            PATH=curl-bin:$PATH
+            PATH=$PWD/curl-bin:$PATH
             curl https://sh.rustup.rs -sSf | sh -s -- -y
             PATH=$PATH:~/.cargo/bin
             cargo build --release --locked --all-targets
